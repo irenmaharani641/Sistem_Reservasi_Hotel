@@ -11,4 +11,9 @@ class Room extends Model
 {
     /** @use HasFactory<\Database\Factories\RoomFactory> */
     use HasFactory;
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

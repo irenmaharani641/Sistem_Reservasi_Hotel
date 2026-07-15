@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\BookingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,6 +30,15 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/user', UserController::class)->middleware('role:ADMIN');
     Route::resource('/room', RoomController::class)->middleware('role:ADMIN');
+    
+    Route::get('/admin/bookings', [BookingController::class, 'index'])->name('admin.booking.index')->middleware('role:ADMIN');
+    Route::patch('/admin/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('admin.booking.updateStatus')->middleware('role:ADMIN');
+
+    Route::middleware('role:GUEST')->group(function () {
+        Route::get('/room/{room}/book', [BookingController::class, 'create'])->name('booking.create');
+        Route::post('/room/{room}/book', [BookingController::class, 'store'])->name('booking.store');
+        Route::get('/my-bookings', [BookingController::class, 'history'])->name('booking.history');
+    });
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::put('/setting/{setting}/update', [SettingController::class, 'update'])->name('setting.update');

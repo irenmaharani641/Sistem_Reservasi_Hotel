@@ -15,8 +15,13 @@
                             <p class="card-text mt-3">{{ Str::limit($room->description, 100) ?: 'Deskripsi kamar tidak tersedia.' }}</p>
                         </div>
                         <div class="card-footer bg-white border-top-0 pb-3">
-                            <!-- Booking button will be implemented in Task 3 -->
-                            <button class="btn btn-outline-primary w-100" disabled>Pesan Kamar</button>
+                            @auth
+                                @if(auth()->user()->role == 'GUEST')
+                                    <a href="{{ route('booking.create', $room) }}" class="btn btn-primary w-100">Pesan Kamar</a>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-outline-primary w-100">Login untuk Pesan</a>
+                            @endauth
                         </div>
                     </div>
                 </div>
