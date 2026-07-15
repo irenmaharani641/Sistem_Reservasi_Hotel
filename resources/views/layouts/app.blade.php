@@ -300,6 +300,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('additional-service.*') ? '' : 'collapsed' }}"
+                        href="{{ route('additional-service.index') }}">
+                        <i class='bx bx-plus-circle'></i>
+                        <span>Layanan Tambahan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.booking.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.booking.index') }}">
                         <i class='bx bx-calendar-check'></i>

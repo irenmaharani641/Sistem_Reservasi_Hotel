@@ -9,6 +9,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdditionalServiceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/user', UserController::class)->middleware('role:ADMIN');
     Route::resource('/room', RoomController::class)->middleware('role:ADMIN');
+    Route::resource('/additional-service', AdditionalServiceController::class)->middleware('role:ADMIN');
     
     Route::get('/admin/bookings', [BookingController::class, 'index'])->name('admin.booking.index')->middleware('role:ADMIN');
     Route::patch('/admin/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('admin.booking.updateStatus')->middleware('role:ADMIN');
