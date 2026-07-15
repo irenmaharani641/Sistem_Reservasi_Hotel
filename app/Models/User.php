@@ -44,4 +44,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Maintenance::class, 'reported_by_user_id');
     }
+
+    public function loyaltyPoints()
+    {
+        return $this->hasMany(LoyaltyPoint::class);
+    }
+
+    public function getTotalPointsAttribute()
+    {
+        $earned = $this->loyaltyPoints()->where('transaction_type', 'EARNED')->sum('points');
+        $redeemed = $this->loyaltyPoints()->where('transaction_type', 'REDEEMED')->sum('points');
+        return $earned - $redeemed;
+    }
 }

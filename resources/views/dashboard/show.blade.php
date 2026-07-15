@@ -12,7 +12,15 @@
             <div class="col-md-8">
                 <h4 class="fw-bold mb-3">{{ $user->name }}</h4>
                 <div class="mb-3">
-                    <span class="badge bg-primary fs-6">{{ $user->role }}</span>
+                    <p>Peran Anda: <span class="badge bg-primary">{{ Auth::user()->role }}</span></p>
+                    
+                    @if(Auth::user()->role == 'GUEST')
+                        <div class="mt-4 p-3 bg-light rounded text-center border">
+                            <p class="mb-1 text-muted"><i class="bx bx-award fs-4"></i></p>
+                            <h6 class="fw-bold mb-0">Total Loyalty Points</h6>
+                            <h3 class="text-warning fw-bold mb-0">{{ Auth::user()->total_points }} Poin</h3>
+                        </div>
+                    @endif
                 </div>
                 <div class="list-group list-group-flush">
                     <div class="list-group-item px-0 border-0">

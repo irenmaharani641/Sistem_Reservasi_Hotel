@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/maintenance', [MaintenanceController::class, 'index'])->name('admin.maintenance.index')->middleware('role:ADMIN');
     Route::patch('/admin/maintenance/{maintenance}/status', [MaintenanceController::class, 'update'])->name('admin.maintenance.update')->middleware('role:ADMIN');
 
+    Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.review.index')->middleware('role:ADMIN');
+
     Route::middleware('role:GUEST')->group(function () {
         Route::get('/room/{room}/book', [BookingController::class, 'create'])->name('booking.create');
         Route::get('/booking/history', [BookingController::class, 'history'])->name('booking.history');
@@ -56,6 +58,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/payment/{booking}', [PaymentController::class, 'create'])->name('payment.create');
         Route::post('/booking/{booking}/pay', [PaymentController::class, 'store'])->name('payment.store');
+        
+        Route::get('/my-reviews', [ReviewController::class, 'myReviews'])->name('review.my_reviews');
+        
+        Route::get('/loyalty', [\App\Http\Controllers\LoyaltyPointController::class, 'index'])->name('loyalty.index');
+
         Route::get('/booking/{booking}/review', [ReviewController::class, 'create'])->name('review.create');
         Route::post('/booking/{booking}/review', [ReviewController::class, 'store'])->name('review.store');
     });

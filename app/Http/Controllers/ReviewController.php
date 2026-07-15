@@ -9,6 +9,41 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
+    // ==========================================
+    // BAGIAN ADMIN
+    // ==========================================
+    public function index()
+    {
+        return view('review.index', [
+            'title' => 'Manajemen Ulasan',
+            'reviews' => Review::with(['user', 'room', 'booking'])->latest()->get()
+        ]);
+    }
+
+    // ==========================================
+    // BAGIAN GUEST
+    // ==========================================
+    public function myReviews()
+    {
+        $pendingReviews = Booking::with('room')
+            ->where('user_id', Auth::id())
+            ->where('status', 'CONFIRMED')
+            ->doesntHave('review')
+            ->latest()
+            ->get();
+
+        $completedReviews = Review::with('room')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
+        return view('review.guest_index', [
+            'title' => 'Ulasan Saya',
+            'pendingReviews' => $pendingReviews,
+            'completedReviews' => $completedReviews
+        ]);
+    }
+
     public function create(Booking $booking)
     {
         if ($booking->user_id !== Auth::id() || $booking->status !== 'CONFIRMED') {

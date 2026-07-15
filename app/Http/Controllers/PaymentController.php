@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\LoyaltyPoint;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -65,8 +66,24 @@ class PaymentController extends Controller
 
         $payment->update([
             'status' => $request->status,
-            'payment_date' => $request->status === 'SUCCESS' ? now() : $payment->payment_date,
         ]);
+
+        if ($request->status == 'SUCCESS') {
+            $payment->booking->update(['status' => 'CONFIRMED']);
+            
+            // Tambahkan Loyalty Points (1 poin tiap Rp 10.000)
+            $points = floor($payment->amount / 10000);
+            if ($points > 0) {
+                LoyaltyPoint::create([
+                    'user_id' => $payment->booking->user_id,
+                    'points' => $points,
+                    'transaction_type' => 'EARNED',
+                    'description' => 'Poin dari Pesanan Kamar ' . $payment->booking->room->room_number
+                ]);
+            }
+        } elseif ($request->status == 'FAILED') {
+            $payment->booking->update(['status' => 'CANCELLED']);
+        }
 
         return back()->withSuccess('Status pembayaran berhasil diperbarui.');
     }

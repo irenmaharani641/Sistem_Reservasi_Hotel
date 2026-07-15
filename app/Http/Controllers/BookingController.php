@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\AdditionalService;
 use App\Models\BookingService;
 use App\Models\Promotion;
+use App\Models\LoyaltyPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -34,7 +35,8 @@ class BookingController extends Controller
             'services' => 'nullable|array',
             'services.*.id' => 'required|exists:additional_services,id',
             'services.*.quantity' => 'required|integer|min:1',
-            'promotion_code' => 'nullable|string'
+            'promotion_code' => 'nullable|string',
+            'use_points' => 'nullable|boolean'
         ]);
 
         $checkIn = Carbon::parse($data['check_in_date']);
@@ -78,6 +80,19 @@ class BookingController extends Controller
             $totalPrice -= $discountAmount;
         }
 
+        $pointsUsed = 0;
+        $pointsDiscount = 0;
+        if (!empty($data['use_points']) && $data['use_points']) {
+            $userPoints = Auth::user()->total_points;
+            if ($userPoints > 0) {
+                // 1 poin = Rp 1.000
+                $maxPointsNeeded = ceil($totalPrice / 1000);
+                $pointsUsed = min($userPoints, $maxPointsNeeded);
+                $pointsDiscount = $pointsUsed * 1000;
+                $totalPrice -= $pointsDiscount;
+            }
+        }
+
         $booking = Booking::create([
             'user_id' => Auth::id(),
             'room_id' => $room->id,
@@ -104,6 +119,15 @@ class BookingController extends Controller
                 }
             }
             $booking->update(['total_price' => $totalPrice + $additionalTotal]);
+        }
+
+        if ($pointsUsed > 0) {
+            LoyaltyPoint::create([
+                'user_id' => Auth::id(),
+                'points' => $pointsUsed,
+                'transaction_type' => 'REDEEMED',
+                'description' => 'Penukaran poin untuk pemesanan Kamar ' . $room->room_number
+            ]);
         }
 
         return to_route('booking.history')->withSuccess('Pesanan berhasil dibuat!');

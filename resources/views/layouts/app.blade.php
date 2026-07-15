@@ -334,6 +334,13 @@
                         <span>Pemeliharaan Kamar</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.review.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.review.index') }}">
+                        <i class='bx bx-star'></i>
+                        <span>Manajemen Ulasan</span>
+                    </a>
+                </li>
             @endif
 
             @if (Auth::user()->role == 'GUEST')
@@ -349,6 +356,20 @@
                         href="{{ route('booking.history') }}">
                         <i class='bx bx-history'></i>
                         <span>Riwayat Pesanan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('loyalty.*') ? '' : 'collapsed' }}"
+                        href="{{ route('loyalty.index') }}">
+                        <i class='bx bx-award'></i>
+                        <span>Loyalty Points</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('review.my_reviews') ? '' : 'collapsed' }}"
+                        href="{{ route('review.my_reviews') }}">
+                        <i class='bx bx-star'></i>
+                        <span>Ulasan Saya</span>
                     </a>
                 </li>
             @endif
@@ -445,7 +466,23 @@
     <script>
         new DataTable('#data-table', {
             pageLength: 5,
-            lengthMenu: [5, 10, 25, 50, 100]
+            lengthMenu: [5, 10, 25, 50, 100],
+            language: {
+                "sEmptyTable":   "Tidak ada data yang tersedia pada tabel ini",
+                "sProcessing":   "Sedang memproses...",
+                "sLengthMenu":   "Tampilkan _MENU_ entri",
+                "sZeroRecords":  "Tidak ditemukan data yang sesuai",
+                "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
+                "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+                "sSearch":       "Cari:",
+                "oPaginate": {
+                    "sFirst":    "Pertama",
+                    "sPrevious": "Sebelumnya",
+                    "sNext":     "Selanjutnya",
+                    "sLast":     "Terakhir"
+                }
+            }
         });
 
         $('.form').parsley({

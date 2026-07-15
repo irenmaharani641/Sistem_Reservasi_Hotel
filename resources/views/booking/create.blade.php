@@ -90,8 +90,19 @@
                 <input type="text" class="form-control @error('promotion_code') is-invalid @enderror" id="promotion_code" name="promotion_code" value="{{ old('promotion_code') }}" style="text-transform:uppercase; max-width: 300px;">
                 @error('promotion_code')
                     <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
+
+            @if(Auth::user()->total_points > 0)
+            <div class="mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="use_points" value="1" id="usePoints">
+                    <label class="form-check-label text-success fw-bold" for="usePoints">
+                        Gunakan Loyalty Points (Tersedia: {{ Auth::user()->total_points }} Poin)
+                    </label>
+                    <div class="form-text mt-0">Poin Anda akan memotong harga pesanan (1 Poin = Diskon Rp 1.000).</div>
+                </div>
+            </div>
+            @endif
 
             <div class="text-end mt-3">
                 <a href="{{ route('rooms.public') }}" class="btn btn-warning me-1">Batal</a>
