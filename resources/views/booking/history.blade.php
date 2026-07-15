@@ -14,6 +14,7 @@
                         <th scope="col">Check-out</th>
                         <th scope="col">Total Harga</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,17 @@
                                     <span class="badge bg-danger">CANCELLED</span>
                                 @else
                                     <span class="badge bg-warning text-dark">PENDING</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($booking->status == 'PENDING')
+                                    @if($booking->payment)
+                                        <span class="text-info small">Menunggu Konfirmasi</span>
+                                    @else
+                                        <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm btn-primary">Bayar Sekarang</a>
+                                    @endif
+                                @else
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                         </tr>

@@ -67,7 +67,7 @@ class BookingController extends Controller
     {
         return view('booking.history', [
             'title' => 'Riwayat Pesanan',
-            'bookings' => Booking::with('room')->where('user_id', Auth::id())->latest()->get(),
+            'bookings' => Booking::with(['room', 'payment'])->where('user_id', Auth::id())->latest()->get(),
         ]);
     }
 
