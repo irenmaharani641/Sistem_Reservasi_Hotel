@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,6 +45,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-bookings', [BookingController::class, 'history'])->name('booking.history');
         Route::get('/booking/{booking}/pay', [PaymentController::class, 'create'])->name('payment.create');
         Route::post('/booking/{booking}/pay', [PaymentController::class, 'store'])->name('payment.store');
+        Route::get('/booking/{booking}/review', [ReviewController::class, 'create'])->name('review.create');
+        Route::post('/booking/{booking}/review', [ReviewController::class, 'store'])->name('review.store');
     });
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');

@@ -41,6 +41,12 @@
                                     @else
                                         <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm btn-primary">Bayar Sekarang</a>
                                     @endif
+                                @elseif($booking->status == 'CONFIRMED')
+                                    @if($booking->review)
+                                        <span class="text-success small">Sudah Diulas</span>
+                                    @else
+                                        <a href="{{ route('review.create', $booking) }}" class="btn btn-sm btn-outline-success">Beri Ulasan</a>
+                                    @endif
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif

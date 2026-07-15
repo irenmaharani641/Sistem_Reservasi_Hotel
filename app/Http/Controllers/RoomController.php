@@ -100,9 +100,10 @@ class RoomController extends Controller
      */
     public function publicIndex()
     {
+        $rooms = Room::withAvg('reviews', 'rating')->withCount('reviews')->where('is_available', true)->get();
         return view('public.rooms', [
-            'title' => 'Daftar Kamar',
-            'rooms' => Room::where('is_available', true)->latest()->get(),
+            'title' => 'Katalog Kamar',
+            'rooms' => $rooms
         ]);
     }
 }
