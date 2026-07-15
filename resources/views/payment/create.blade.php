@@ -8,6 +8,15 @@
             <h5 class="alert-heading">Detail Pesanan</h5>
             <p class="mb-1"><strong>Kamar:</strong> {{ $booking->room->room_number }} ({{ $booking->room->type }})</p>
             <p class="mb-1"><strong>Tanggal:</strong> {{ $booking->check_in_date->format('d M Y') }} s/d {{ $booking->check_out_date->format('d M Y') }}</p>
+            @if($booking->bookingServices->isNotEmpty())
+                <p class="mb-1 mt-2"><strong>Rincian Layanan Tambahan:</strong></p>
+                <ul class="mb-2 ps-3 small">
+                @foreach($booking->bookingServices as $bs)
+                    <li>{{ $bs->additionalService->name }} (x{{ $bs->quantity }}) = Rp {{ number_format($bs->total_price, 2, ',', '.') }}</li>
+                @endforeach
+                </ul>
+            @endif
+            <hr>
             <p class="mb-0 fs-5 text-dark"><strong>Total Tagihan:</strong> Rp {{ number_format($booking->total_price, 2, ',', '.') }}</p>
         </div>
 

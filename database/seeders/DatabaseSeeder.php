@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             ReviewSeeder::class,
             AdditionalServiceSeeder::class,
+            BookingServiceSeeder::class,
         ]);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Room;
+use App\Models\AdditionalService;
+use App\Models\BookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -19,18 +21,22 @@ class BookingController extends Controller
         return view('booking.create', [
             'title' => 'Pesan Kamar',
             'room' => $room,
+            'additional_services' => AdditionalService::all(),
         ]);
     }
 
     public function store(Request $request, Room $room)
     {
-        $request->validate([
+        $data = $request->validate([
             'check_in_date' => 'required|date|after_or_equal:today',
             'check_out_date' => 'required|date|after:check_in_date',
+            'services' => 'nullable|array',
+            'services.*.id' => 'required|exists:additional_services,id',
+            'services.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $checkIn = Carbon::parse($request->check_in_date);
-        $checkOut = Carbon::parse($request->check_out_date);
+        $checkIn = Carbon::parse($data['check_in_date']);
+        $checkOut = Carbon::parse($data['check_out_date']);
 
         // Cek overlap booking
         $overlappingBookings = Booking::where('room_id', $room->id)
@@ -51,7 +57,7 @@ class BookingController extends Controller
         $nights = $checkIn->diffInDays($checkOut);
         $totalPrice = $room->price_per_night * $nights;
 
-        Booking::create([
+        $booking = Booking::create([
             'user_id' => Auth::id(),
             'room_id' => $room->id,
             'check_in_date' => $checkIn,
@@ -60,6 +66,24 @@ class BookingController extends Controller
             'status' => 'PENDING',
         ]);
 
+        if (!empty($data['services'])) {
+            $additionalTotal = 0;
+            foreach ($data['services'] as $serviceData) {
+                $service = AdditionalService::find($serviceData['id']);
+                if ($service && $serviceData['quantity'] > 0) {
+                    $serviceTotal = $service->price * $serviceData['quantity'];
+                    BookingService::create([
+                        'booking_id' => $booking->id,
+                        'additional_service_id' => $service->id,
+                        'quantity' => $serviceData['quantity'],
+                        'total_price' => $serviceTotal
+                    ]);
+                    $additionalTotal += $serviceTotal;
+                }
+            }
+            $booking->update(['total_price' => $totalPrice + $additionalTotal]);
+        }
+
         return to_route('booking.history')->withSuccess('Pesanan berhasil dibuat!');
     }
 
@@ -67,7 +91,7 @@ class BookingController extends Controller
     {
         return view('booking.history', [
             'title' => 'Riwayat Pesanan',
-            'bookings' => Booking::with(['room', 'payment', 'review'])->where('user_id', Auth::id())->latest()->get(),
+            'bookings' => Booking::with(['room', 'payment', 'review', 'bookingServices.additionalService'])->where('user_id', Auth::id())->latest()->get(),
         ]);
     }
 

@@ -21,7 +21,19 @@
                     @foreach ($bookings as $booking)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $booking->room->room_number }} ({{ $booking->room->type }})</td>
+                            <td>
+                                <strong>{{ $booking->room->room_number }}</strong> ({{ $booking->room->type }})
+                                @if($booking->bookingServices->isNotEmpty())
+                                    <div class="mt-1 small text-muted">
+                                        <span class="fw-bold d-block border-top pt-1 mt-1">Layanan Tambahan:</span>
+                                        <ul class="mb-0 ps-3">
+                                        @foreach($booking->bookingServices as $bs)
+                                            <li>{{ $bs->additionalService->name ?? 'Layanan' }} (x{{ $bs->quantity }})</li>
+                                        @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </td>
                             <td>{{ $booking->check_in_date->format('d M Y') }}</td>
                             <td>{{ $booking->check_out_date->format('d M Y') }}</td>
                             <td>Rp {{ number_format($booking->total_price, 2, ',', '.') }}</td>

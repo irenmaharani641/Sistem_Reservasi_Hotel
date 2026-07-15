@@ -11,4 +11,9 @@ class AdditionalService extends Model
 {
     /** @use HasFactory<\Database\Factories\AdditionalServiceFactory> */
     use HasFactory;
+
+    public function bookingServices()
+    {
+        return $this->hasMany(BookingService::class);
+    }
 }

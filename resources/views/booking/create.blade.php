@@ -33,6 +33,56 @@
                 </div>
             </div>
 
+            <hr class="my-4">
+            <h5 class="mb-3">Layanan Tambahan (Opsional)</h5>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" style="width: 50px;">Pilih</th>
+                            <th scope="col">Nama Layanan</th>
+                            <th scope="col">Harga Satuan</th>
+                            <th scope="col" style="width: 150px;">Kuantitas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($additional_services as $index => $service)
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <input class="form-check-input service-checkbox" type="checkbox" name="services[{{ $index }}][id]" value="{{ $service->id }}" id="service_{{ $service->id }}">
+                                </td>
+                                <td>
+                                    <label class="form-check-label d-block fw-bold" for="service_{{ $service->id }}">
+                                        {{ $service->name }}
+                                    </label>
+                                    <small class="text-muted">{{ $service->description }}</small>
+                                </td>
+                                <td class="align-middle">Rp {{ number_format($service->price, 2, ',', '.') }}</td>
+                                <td class="align-middle">
+                                    <input type="number" class="form-control service-qty" name="services[{{ $index }}][quantity]" value="1" min="1" disabled>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            @push('scripts')
+            <script>
+                $(document).ready(function() {
+                    $('.service-checkbox').on('change', function() {
+                        const qtyInput = $(this).closest('tr').find('.service-qty');
+                        if ($(this).is(':checked')) {
+                            qtyInput.prop('disabled', false);
+                        } else {
+                            qtyInput.prop('disabled', true);
+                            qtyInput.val(1);
+                        }
+                    });
+                });
+            </script>
+            @endpush
+
             <div class="text-end mt-3">
                 <a href="{{ route('rooms.public') }}" class="btn btn-warning me-1">Batal</a>
                 <button type="submit" class="btn btn-primary">Konfirmasi Pesanan</button>
