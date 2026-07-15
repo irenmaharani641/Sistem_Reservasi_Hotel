@@ -46,6 +46,17 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="phone_number" class="form-label">Nomor Telepon</label>
+                        <input class="form-control @error('phone_number') is-invalid  @enderror" type="text" id="phone_number"
+                            name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
+                        @error('phone_number')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label for="password" class="form-label ">Password</label>
                         <input class="form-control @error('password') is-invalid  @enderror" type="password"
                             id="password" name="password" minlength="8">
@@ -72,8 +83,8 @@
                         <select class="form-select select2-default @error('role') is-invalid  @enderror" id="role"
                             name="role" required>
                             <option value="">Pilih Role</option>
-                            <option value="Superadmin" @selected(old('role', $user->role) == 'Superadmin')>Superadmin</option>
-                            <option value="Admin" @selected(old('role', $user->role) == 'Admin')>Admin</option>
+                            <option value="ADMIN" @selected(old('role', $user->role) == 'ADMIN')>ADMIN</option>
+                            <option value="GUEST" @selected(old('role', $user->role) == 'GUEST')>GUEST</option>
                         </select>
                         @error('role')
                             <div class="invalid-feedback">

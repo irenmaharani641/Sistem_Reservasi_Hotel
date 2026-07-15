@@ -17,25 +17,29 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Tamus Tahir',
                 'email' => 'tamus@gmail.com',
-                'role' => 'Superadmin',
+                'role' => 'ADMIN',
+                'phone_number' => '081234567890',
             ],
             [
                 'name' => 'Joh Doe',
                 'email' => 'admin@gmail.com',
-                'role' => 'Admin',
+                'role' => 'ADMIN',
+                'phone_number' => '081234567891',
             ],
         ];
 
         foreach ($users as $user) {
-            if (User::where('email', $user['email'])->exists()) {
-                continue;
+            if (!User::where('email', $user['email'])->exists()) {
+                User::factory()->create([
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'role' => $user['role'],
+                    'phone_number' => $user['phone_number'],
+                ]);
             }
-
-            User::factory()->create([
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'role' => $user['role'],
-            ]);
         }
+
+        // Generate 10 GUEST users
+        User::factory()->count(10)->create();
     }
 }

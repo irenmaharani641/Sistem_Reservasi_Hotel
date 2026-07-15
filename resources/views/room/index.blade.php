@@ -1,13 +1,9 @@
 <x-app>
-
     <x-slot:title>{{ $title }}</x-slot:title>
 
-
-
     <div class="card shadow-lg p-3">
-
         <div class="mb-3">
-            <a class="btn btn-primary" href="{{ route('user.create') }}" role="button">Tambah</a>
+            <a class="btn btn-primary" href="{{ route('room.create') }}" role="button">Tambah Kamar</a>
         </div>
 
         <div class="table-responsive">
@@ -15,49 +11,53 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">No. HP</th>
-                        <th scope="col">Role</th>
+                        <th scope="col">No. Kamar</th>
+                        <th scope="col">Tipe</th>
+                        <th scope="col">Harga/Malam</th>
+                        <th scope="col">Ketersediaan</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($users as $user)
+                    @foreach ($rooms as $room)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->phone_number }}</td>
-                            <td>{{ $user->role }}</td>
+                            <td>{{ $room->room_number }}</td>
+                            <td>{{ $room->type }}</td>
+                            <td>Rp {{ number_format($room->price_per_night, 2, ',', '.') }}</td>
+                            <td>
+                                @if($room->is_available)
+                                    <span class="badge bg-success">Tersedia</span>
+                                @else
+                                    <span class="badge bg-danger">Tidak Tersedia</span>
+                                @endif
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-info btn-sm btn-detail"
-                                    data-route="{{ route('user.show', $user) }}">
+                                    data-route="{{ route('room.show', $room) }}">
                                     <i class='bx bx-show'></i>
                                 </button>
-                                <a href="{{ route('user.edit', $user) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('room.edit', $room) }}" class="btn btn-warning btn-sm">
                                     <i class='bx bx-edit-alt'></i>
                                 </a>
                                 <button type="button" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal" data-route="{{ route('user.destroy', $user) }}">
+                                    data-bs-target="#deleteModal" data-route="{{ route('room.destroy', $room) }}">
                                     <i class='bx bx-trash'></i>
                                 </button>
                             </td>
                         </tr>
                     @endforeach
-
                 </tbody>
             </table>
         </div>
-
     </div>
 
     @push('modals')
         <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Detail User</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Detail Kamar</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="modal-detail">
@@ -67,6 +67,28 @@
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form id="form-delete" action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Konfirmasi Hapus</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Apakah Anda yakin ingin menghapus kamar ini?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     @endpush
@@ -104,5 +126,4 @@
             })
         </script>
     @endpush
-
 </x-app>

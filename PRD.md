@@ -26,11 +26,18 @@ Aplikasi Sistem Reservasi Hotel adalah platform terintegrasi yang dirancang untu
 Arsitektur sistem menggunakan pola *Client-Server* dengan *Frontend* berbasis web (HTML, CSS, JS/Framework) dan *Backend* RESTful API yang terhubung ke database relasional.
 
 ### 4.1. Penjelasan Naratif Skema Data
-Sistem ini menggunakan struktur data relasional yang berpusat pada empat entitas utama:
+Sistem ini menggunakan struktur data relasional yang berpusat pada entitas-entitas berikut:
 - **USERS (Pengguna):** Menyimpan data tamu dan staf hotel. Menggunakan *Role-Based Access Control* (GUEST atau ADMIN) untuk mengatur hak akses.
-- **ROOMS (Kamar):** Mewakili data inventaris hotel. Setiap kamar memiliki nomor unik, tipe (misal: Standard, Deluxe, Suite), harga per malam, dan status ketersediaan.
-- **BOOKINGS (Reservasi):** Entitas transaksional yang menghubungkan pengguna dengan kamar. Menyimpan detail tanggal *check-in*, *check-out*, total harga, dan status reservasi (seperti *PENDING*, *CONFIRMED*, *CANCELLED*).
-- **PAYMENTS (Pembayaran):** Mencatat riwayat transaksi yang terkait dengan suatu reservasi, mencakup jumlah bayar, metode pembayaran, dan status transaksi.
+- **ROOMS (Kamar):** Mewakili data inventaris hotel. Setiap kamar memiliki nomor unik, tipe, harga per malam, dan status ketersediaan.
+- **BOOKINGS (Reservasi):** Entitas transaksional yang menghubungkan pengguna dengan kamar. Menyimpan detail *check-in*, *check-out*, total harga, dan status reservasi.
+- **PAYMENTS (Pembayaran):** Mencatat riwayat transaksi yang terkait dengan suatu reservasi.
+- **REVIEWS (Ulasan):** Menyimpan penilaian dan ulasan dari tamu terkait kamar yang dipesan.
+- **ADDITIONAL_SERVICES (Layanan Tambahan):** Katalog layanan berbayar seperti sarapan, spa, atau antar-jemput bandara.
+- **BOOKING_SERVICES (Pesanan Layanan):** Tabel perantara untuk mencatat layanan tambahan pada setiap pemesanan.
+- **PROMOTIONS (Promosi):** Data kupon/diskon yang dapat digunakan oleh tamu saat pembayaran.
+- **MAINTENANCES (Pemeliharaan):** Catatan perbaikan dan pengecekan kondisi kamar oleh staf.
+- **LOYALTY_POINTS (Poin Loyalitas):** Sistem poin hadiah untuk tamu setia.
+- **NOTIFICATIONS (Notifikasi):** Pesan pemberitahuan sistem kepada pengguna (misal: pengingat *check-in*).
 
 ### 4.2. Visualisasi ERD (Entity Relationship Diagram)
 Berikut adalah struktur relasi antar entitas yang mendasari sistem database:
@@ -38,17 +45,31 @@ Berikut adalah struktur relasi antar entitas yang mendasari sistem database:
 ```mermaid
 erDiagram
     USERS ||--o{ BOOKINGS : makes
+    USERS ||--o{ REVIEWS : writes
+    USERS ||--o{ LOYALTY_POINTS : earns
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ MAINTENANCES : reports
+    
+    ROOMS ||--o{ BOOKINGS : contains
+    ROOMS ||--o{ MAINTENANCES : undergoes
+    ROOMS ||--o{ REVIEWS : receives
+    
+    BOOKINGS ||--o{ PAYMENTS : has
+    BOOKINGS ||--o{ BOOKING_SERVICES : includes
+    BOOKINGS }|--o| PROMOTIONS : uses
+    
+    ADDITIONAL_SERVICES ||--o{ BOOKING_SERVICES : provides
+
     USERS {
         int id PK
         string name
         string email
         string password_hash
         string phone_number
-        string role "GUEST or ADMIN"
+        string role "GUEST, ADMIN"
         datetime created_at
     }
     
-    ROOMS ||--o{ BOOKINGS : contains
     ROOMS {
         int id PK
         string room_number
@@ -58,11 +79,11 @@ erDiagram
         boolean is_available
     }
     
-    BOOKINGS ||--o{ PAYMENTS : has
     BOOKINGS {
         int id PK
         int user_id FK
         int room_id FK
+        int promotion_id FK
         date check_in_date
         date check_out_date
         decimal total_price
@@ -77,6 +98,65 @@ erDiagram
         string payment_method "Credit Card, Transfer, e-Wallet"
         string status "SUCCESS, FAILED, PENDING"
         datetime payment_date
+    }
+
+    REVIEWS {
+        int id PK
+        int booking_id FK
+        int user_id FK
+        int room_id FK
+        int rating "1 to 5"
+        string comment
+        datetime created_at
+    }
+
+    ADDITIONAL_SERVICES {
+        int id PK
+        string name
+        string description
+        decimal price
+    }
+
+    BOOKING_SERVICES {
+        int id PK
+        int booking_id FK
+        int service_id FK
+        int quantity
+        decimal total_price
+    }
+
+    PROMOTIONS {
+        int id PK
+        string code
+        decimal discount_percentage
+        decimal max_discount
+        date valid_until
+    }
+
+    MAINTENANCES {
+        int id PK
+        int room_id FK
+        int reported_by_user_id FK
+        string issue_description
+        string status "PENDING, IN_PROGRESS, RESOLVED"
+        datetime resolved_at
+    }
+
+    LOYALTY_POINTS {
+        int id PK
+        int user_id FK
+        int points
+        string transaction_type "EARNED, REDEEMED"
+        datetime created_at
+    }
+
+    NOTIFICATIONS {
+        int id PK
+        int user_id FK
+        string title
+        string message
+        boolean is_read
+        datetime created_at
     }
 ```
 
