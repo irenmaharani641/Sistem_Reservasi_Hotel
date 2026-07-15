@@ -15,7 +15,8 @@ class ReviewSeeder extends Seeder
      */
     public function run(): void
     {
-        $bookings = Booking::where('status', 'CONFIRMED')->get();
+        // Ambil hanya separuh data booking yang CONFIRMED, agar sisanya bisa dites oleh user
+        $bookings = Booking::where('status', 'CONFIRMED')->take(3)->get();
         
         foreach ($bookings as $booking) {
             Review::create([

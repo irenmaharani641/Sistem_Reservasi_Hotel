@@ -284,12 +284,50 @@
                 </a>
             </li>
 
-            @if (Auth::user()->role == 'Superadmin')
+            @if (Auth::user()->role == 'ADMIN')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('user.*') ? '' : 'collapsed' }}"
                         href="{{ route('user.index') }}">
                         <i class='bx bx-user-pin'></i>
-                        <span>User</span>
+                        <span>Pengguna</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('room.*') ? '' : 'collapsed' }}"
+                        href="{{ route('room.index') }}">
+                        <i class='bx bx-bed'></i>
+                        <span>Manajemen Kamar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.booking.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.booking.index') }}">
+                        <i class='bx bx-calendar-check'></i>
+                        <span>Reservasi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.payment.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.payment.index') }}">
+                        <i class='bx bx-money'></i>
+                        <span>Pembayaran</span>
+                    </a>
+                </li>
+            @endif
+
+            @if (Auth::user()->role == 'GUEST')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('rooms.public') ? '' : 'collapsed' }}"
+                        href="{{ route('rooms.public') }}">
+                        <i class='bx bx-search'></i>
+                        <span>Katalog Kamar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('booking.history') ? '' : 'collapsed' }}"
+                        href="{{ route('booking.history') }}">
+                        <i class='bx bx-history'></i>
+                        <span>Riwayat Pesanan</span>
                     </a>
                 </li>
             @endif
