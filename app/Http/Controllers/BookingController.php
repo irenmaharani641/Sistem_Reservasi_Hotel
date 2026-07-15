@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Models\AdditionalService;
 use App\Models\BookingService;
+use App\Models\Promotion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -33,6 +34,7 @@ class BookingController extends Controller
             'services' => 'nullable|array',
             'services.*.id' => 'required|exists:additional_services,id',
             'services.*.quantity' => 'required|integer|min:1',
+            'promotion_code' => 'nullable|string'
         ]);
 
         $checkIn = Carbon::parse($data['check_in_date']);
@@ -56,6 +58,25 @@ class BookingController extends Controller
 
         $nights = $checkIn->diffInDays($checkOut);
         $totalPrice = $room->price_per_night * $nights;
+        $discountAmount = 0;
+        $promotionId = null;
+
+        if (!empty($data['promotion_code'])) {
+            $promo = Promotion::where('code', strtoupper($data['promotion_code']))->first();
+            if (!$promo) {
+                return back()->withErrors(['promotion_code' => 'Kode promo tidak ditemukan.'])->withInput();
+            }
+            if (Carbon::parse($promo->valid_until)->isPast()) {
+                return back()->withErrors(['promotion_code' => 'Kode promo sudah kadaluarsa.'])->withInput();
+            }
+
+            $discountAmount = ($totalPrice * $promo->discount_percentage) / 100;
+            if ($discountAmount > $promo->max_discount) {
+                $discountAmount = $promo->max_discount;
+            }
+            $promotionId = $promo->id;
+            $totalPrice -= $discountAmount;
+        }
 
         $booking = Booking::create([
             'user_id' => Auth::id(),
@@ -64,6 +85,7 @@ class BookingController extends Controller
             'check_out_date' => $checkOut,
             'total_price' => $totalPrice,
             'status' => 'PENDING',
+            'promotion_id' => $promotionId,
         ]);
 
         if (!empty($data['services'])) {
@@ -91,7 +113,7 @@ class BookingController extends Controller
     {
         return view('booking.history', [
             'title' => 'Riwayat Pesanan',
-            'bookings' => Booking::with(['room', 'payment', 'review', 'bookingServices.additionalService'])->where('user_id', Auth::id())->latest()->get(),
+            'bookings' => Booking::with(['room', 'payment', 'review', 'bookingServices.additionalService', 'promotion'])->where('user_id', Auth::id())->latest()->get(),
         ]);
     }
 

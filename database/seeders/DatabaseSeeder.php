@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,
             AdditionalServiceSeeder::class,
             BookingServiceSeeder::class,
+            PromotionSeeder::class,
         ]);
     }
 }

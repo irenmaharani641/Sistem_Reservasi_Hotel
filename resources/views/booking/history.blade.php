@@ -33,6 +33,11 @@
                                         </ul>
                                     </div>
                                 @endif
+                                @if($booking->promotion)
+                                    <div class="mt-1 small text-success fw-bold">
+                                        <i class="bi bi-tag-fill"></i> Promo: {{ $booking->promotion->code }}
+                                    </div>
+                                @endif
                             </td>
                             <td>{{ $booking->check_in_date->format('d M Y') }}</td>
                             <td>{{ $booking->check_out_date->format('d M Y') }}</td>

@@ -82,6 +82,16 @@
                 });
             </script>
             @endpush
+            
+            <hr class="my-4">
+            <h5 class="mb-3">Kupon Promosi (Opsional)</h5>
+            <div class="mb-4">
+                <label for="promotion_code" class="form-label">Masukkan Kode Promo</label>
+                <input type="text" class="form-control @error('promotion_code') is-invalid @enderror" id="promotion_code" name="promotion_code" value="{{ old('promotion_code') }}" style="text-transform:uppercase; max-width: 300px;">
+                @error('promotion_code')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
             <div class="text-end mt-3">
                 <a href="{{ route('rooms.public') }}" class="btn btn-warning me-1">Batal</a>

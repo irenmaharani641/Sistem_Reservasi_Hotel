@@ -307,6 +307,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('promotion.*') ? '' : 'collapsed' }}"
+                        href="{{ route('promotion.index') }}">
+                        <i class='bx bx-purchase-tag-alt'></i>
+                        <span>Manajemen Promosi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.booking.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.booking.index') }}">
                         <i class='bx bx-calendar-check'></i>

@@ -45,4 +45,9 @@ class Booking extends Model
     {
         return $this->hasMany(BookingService::class);
     }
+
+    public function promotion()
+    {
+        return $this->belongsTo(Promotion::class);
+    }
 }

@@ -16,6 +16,12 @@
                 @endforeach
                 </ul>
             @endif
+            @if($booking->promotion)
+                <p class="mb-1 mt-2 text-success">
+                    <strong>Diskon Promosi ({{ $booking->promotion->code }}):</strong> 
+                    Aktif
+                </p>
+            @endif
             <hr>
             <p class="mb-0 fs-5 text-dark"><strong>Total Tagihan:</strong> Rp {{ number_format($booking->total_price, 2, ',', '.') }}</p>
         </div>
