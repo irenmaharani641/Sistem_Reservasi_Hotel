@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             AdditionalServiceSeeder::class,
             BookingServiceSeeder::class,
             PromotionSeeder::class,
+            MaintenanceSeeder::class,
         ]);
     }
 }

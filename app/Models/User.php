@@ -39,4 +39,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    public function maintenances()
+    {
+        return $this->hasMany(Maintenance::class, 'reported_by_user_id');
+    }
 }

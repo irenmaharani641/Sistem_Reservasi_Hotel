@@ -323,8 +323,15 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.payment.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.payment.index') }}">
-                        <i class='bx bx-money'></i>
+                        <i class='bx bx-wallet'></i>
                         <span>Pembayaran</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.maintenance.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.maintenance.index') }}">
+                        <i class='bx bx-wrench'></i>
+                        <span>Pemeliharaan Kamar</span>
                     </a>
                 </li>
             @endif

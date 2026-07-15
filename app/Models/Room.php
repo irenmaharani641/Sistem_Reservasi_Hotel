@@ -17,6 +17,11 @@ class Room extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function maintenances()
+    {
+        return $this->hasMany(Maintenance::class);
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

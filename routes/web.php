@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdditionalServiceController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\MaintenanceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,11 +44,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/payments', [PaymentController::class, 'index'])->name('admin.payment.index')->middleware('role:ADMIN');
     Route::patch('/admin/payments/{payment}/status', [PaymentController::class, 'updateStatus'])->name('admin.payment.updateStatus')->middleware('role:ADMIN');
 
+    Route::get('/admin/maintenance', [MaintenanceController::class, 'index'])->name('admin.maintenance.index')->middleware('role:ADMIN');
+    Route::patch('/admin/maintenance/{maintenance}/status', [MaintenanceController::class, 'update'])->name('admin.maintenance.update')->middleware('role:ADMIN');
+
     Route::middleware('role:GUEST')->group(function () {
         Route::get('/room/{room}/book', [BookingController::class, 'create'])->name('booking.create');
-        Route::post('/room/{room}/book', [BookingController::class, 'store'])->name('booking.store');
-        Route::get('/my-bookings', [BookingController::class, 'history'])->name('booking.history');
-        Route::get('/booking/{booking}/pay', [PaymentController::class, 'create'])->name('payment.create');
+        Route::get('/booking/history', [BookingController::class, 'history'])->name('booking.history');
+        Route::post('/booking/{room}', [BookingController::class, 'store'])->name('booking.store');
+
+        Route::post('/maintenance/store', [MaintenanceController::class, 'store'])->name('maintenance.store');
+
+        Route::get('/payment/{booking}', [PaymentController::class, 'create'])->name('payment.create');
         Route::post('/booking/{booking}/pay', [PaymentController::class, 'store'])->name('payment.store');
         Route::get('/booking/{booking}/review', [ReviewController::class, 'create'])->name('review.create');
         Route::post('/booking/{booking}/review', [ReviewController::class, 'store'])->name('review.store');
